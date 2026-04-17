@@ -1,0 +1,1 @@
+# Grupi12_Rrjeta_Kompjuterike
