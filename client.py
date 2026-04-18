@@ -8,7 +8,30 @@ def start_client():
     client.connect((HOST, PORT))
 
     print("Connected to server")
+ #a+
+    msg = client.recv(1024).decode()
+    print(msg, end="")
 
+    username = input()
+    client.send(username.encode())
+
+    msg = client.recv(1024).decode()
+    print(msg)
+
+    while True:
+        cmd = input(">> ")
+        client.send(cmd.encode())
+
+        if cmd.upper() == "EXIT":
+            break
+
+        try:
+            response = client.recv(1024).decode()
+            print(response)
+        except:
+            print("Server disconnected.")
+            break
+#a++
     client.close()
 
 
