@@ -65,3 +65,22 @@ def handle_client(client_socket, addr):
 
         except:
             break
+ print(f"[-] Disconnected: {addr}")
+    client_socket.close()
+
+
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen(5)
+
+    print(f"[SERVER STARTED] {HOST}:{PORT}")
+
+    while True:
+        client_socket, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(client_socket, addr))
+        thread.start()
+
+
+if __name__ == "__main__":
+    start_server()
