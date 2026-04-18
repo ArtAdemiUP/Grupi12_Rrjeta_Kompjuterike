@@ -25,3 +25,43 @@ def handle_client(client_socket, addr):
     permission = clients_permissions.get(username, "read")
 
     client_socket.send(f"Je lidhur si {username} me permission: {permission}\n".encode())
+     while True:
+        try:
+            data = client_socket.recv(1024).decode()
+            if not data:
+                break
+
+            print(f"[{username}] -> {data}")
+
+            command = data.split()
+
+            if command[0] == "READ":
+                files = os.listdir("server_files")
+                client_socket.send(f"Files: {files}\n".encode())
+
+            elif command[0] == "WRITE":
+                if permission != "admin":
+                    client_socket.send("Nuk ke leje për WRITE!\n".encode())
+                else:
+                    filename = command[1]
+                    content = " ".join(command[2:])
+                    with open(f"server_files/{filename}", "w") as f:
+                        f.write(content)
+                    client_socket.send("File u shkrua me sukses!\n".encode())
+
+            elif command[0] == "EXEC":
+                if permission != "admin":
+                    client_socket.send("Nuk ke leje për EXECUTE!\n".encode())
+                else:
+                    result = os.listdir("server_files")
+                    client_socket.send(f"Exec result: {result}\n".encode())
+
+            elif command[0] == "EXIT":
+                client_socket.send("Po shkëputesh...\n".encode())
+                break
+
+            else:
+                client_socket.send("Komandë e panjohur!\n".encode())
+
+        except:
+            break
